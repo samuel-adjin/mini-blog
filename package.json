@@ -1,0 +1,32 @@
+{
+  "name": "permissions-roles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@bull-board/api": "^3.10.3",
+    "@bull-board/express": "^3.10.3",
+    "bcryptjs": "^2.4.3",
+    "bull": "^4.8.1",
+    "bullmq": "^1.80.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.9",
+    "mongoose-permissions": "^1.0.0",
+    "nodemailer": "^6.7.3",
+    "nodemailer-sendgrid": "^1.0.3",
+    "redis": "^4.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
