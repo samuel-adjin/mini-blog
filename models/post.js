@@ -17,7 +17,14 @@ const PostSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"User",
     },
-    image:[String],
+    images:{
+        type:String,
+    },
+    isPublished:
+    {
+        type:Boolean,
+        default:false,
+    },
 },{timestamps:true});
 PostSchema.statics.getAllUserPost = function(userId){
     return this.where({postedBy:userId});

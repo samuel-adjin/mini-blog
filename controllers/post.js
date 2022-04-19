@@ -1,6 +1,12 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const { getUserPost } = require("../Helpers/posts");
+const { upload, deleteFile } = require("../Helpers/fileUpload");
+
+
+
+
+
 const createPost = async (req, res) => {
     try {
         const post = new Post({
@@ -17,19 +23,24 @@ const createPost = async (req, res) => {
         }
         // store user who makes the post id on the post table
         post.postedBy = req.user._id;
-        // user.posts.push(post._id);
-        if (!post) {
-            return res
-                .status(500)
-                .json({ success: false, msg: "post not created!!! " });
-        }
-        await post.save();
-        //    await user.save();
-        res.status(201).json({ success: true, data: post });
+        const image = upload.single('image');
+        image(req, res, async (err) => {
+            if (err) {
+                throw err;
+            }
+            if (req.file === undefined) {
+                return res.status(400).json("No file selected");
+            } else {
+                post.image = req.file.path;
+                await post.save();
+                res.status(201).json({ success: true, data: post });
+            }
+        })
+
     } catch (error) {
         res.status(500).json({ success: false, error });
     }
-};
+}
 
 const editPost = async (req, res) => {
     try {
@@ -113,15 +124,49 @@ const searchPost = async (req, res) => {
         const posts = await Post.find(search).populate("postedBy");
         res.status(201).json({ success: true, data: posts });
     } catch (error) {
-        res.status(500).json({ success: false, error });
+        return res.status(500).json({ success: false, error });
     }
 };
 
-module.exports = {
-    searchPost,
-    deletePost,
-    getPost,
-    showAllPost,
-    editPost,
-    createPost,
-};
+
+const publishedPost = async (req, res) => {
+    try {
+        const poster = getUserPost(req.user, req.post);
+        if (!poster)
+            return res.status(401).json({ success: false, error: "Not allowed" });
+        const { id: postId } = req.params;
+        const post = await Post.findOne({ _id: postId });
+        post.isPublished = true;
+        await post.save();
+        res.status(201).json({ success: true, msg: "Post published successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, error });
+    }
+}
+
+const changeContentImage = async (req, res) => {
+    try {
+        const poster = getUserPost(req.user, req.post);
+        if (!poster)
+            return res.status(401).json({ success: false, error: "Not allowed" });
+        const { id: postId } = req.params;
+        const post = await Post.findOne({ _id: postId })
+        const image = upload.single('image');
+        image(req, res, async (err) => {
+            if (err) {
+                throw err;
+            }
+            if (req.file === undefined) {
+                res.status(500).json({ success: false, msg: "no file selected" })
+            }
+            deleteFile(post.image)
+            post.image = req.file.path;
+            await post.save();
+            res.status(201).json({ success: "true", msg: "Image changed successfully" });
+        })
+    } catch (error) {
+        return res.status(500).json({ success: false, error });
+    }
+}
+
+module.exports = { publishedPost, searchPost, deletePost, getPost, showAllPost, editPost, createPost, changeContentImage }

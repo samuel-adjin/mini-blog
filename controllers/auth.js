@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const nodemailerSendgrid = require('nodemailer-sendgrid');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const { addRoleToUser } = require("../Helpers/roles");

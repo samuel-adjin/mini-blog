@@ -1,10 +1,10 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-// const role = require('../roles/role-permissions');
 const{getRedis,setRedis} = require("../Helpers/redis");
-// const redis = require("redis");
 const {isUser} = require("../Helpers/user");
 const Post = require("../models/post");
+const {upload,deleteFile} = require("../Helpers/fileUpload");
+
 
 
 const showAllUsers = async (req,res)=>{
@@ -171,6 +171,51 @@ const unLockAccount = async (req,res)=>{
 }
 
 
+const uploadProfilePic = async (req,res)=>{
+    try{
+        const image = upload.single('profile');
+          image(req,res, async (err)=>{
+            if(err){
+                throw err 
+            }
+            if(req.file === undefined){
+                res.status(500).json({success:false,msg: "no file selected"})
+            }else{
+                const user = await User.findOne({_id:req.user._id});
+                if(!user){
+                    res.status(500).json({success:false,msg:'Ooops... user not found!!! Session expired'});   
+                }
+                if( user.profilePic !== null){
+                    deleteFile(user.profilePic)
+                    user.profilePic = req.file.path;
+                    user.save();
+                    res.status(201).json({success:"true", msg:"Profile pic changed successfully"});
+                }
+                user.profilePic = req.file.path;
+                user.save();
+                res.status(201).json({success:"true", msg:"Profile pic added successfully"});
+            }
+        })
+    }catch(error){
+        res.status(500).json({success:false, error:error})
+    }
+}
+
+
+const deleteProfilePic = async (req,res)=>{
+    try{
+        const user = await User.findOneAndDelete({_id:req.user._id});
+        if(!user){
+            res.status(500).json({success:false,msg:'Ooops... user not found!!! Profile pic not removed'});   
+        }
+        deleteFile(user.profilePic)
+        res.status(200).json({success:"true", msg:"Profile pic removed successfully"});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({success:false, error:error}) 
+    }
+}
+
 const generateToken = (userData) =>{
     const token =  jwt.sign(userData,process.env.ACCESS_TOKEN,{expiresIn:'30s'})
     return token;
@@ -181,4 +226,4 @@ const generateRefreshToken = (userData) =>{
     return token;
 }
 
-module.exports = {showAllUsers,getUser,updateUser,deleteUser,searchUser,token,lockAccount,unLockAccount,allUserPost}
+module.exports = {showAllUsers,getUser,updateUser,deleteUser,searchUser,token,lockAccount,unLockAccount,allUserPost,deleteProfilePic,uploadProfilePic}

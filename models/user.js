@@ -43,10 +43,10 @@ const UserSchema = new Schema({
         trim:true,
         unique:true 
     },
-    // image:{
-    //     trim:true,
-    //     default:null
-    // },
+    profilePic:{
+        type:String,
+        default:null
+    },
     mobile:
     {
         type:String,
@@ -54,12 +54,6 @@ const UserSchema = new Schema({
         trim:true
     },
 
-    // emailToken:
-    // {
-    //     type:String,
-    //     default:null,
-    //     unique:true
-    // },
     isVerified:{
         type:Boolean,
         default:false
@@ -69,10 +63,7 @@ const UserSchema = new Schema({
         type:Boolean,
         default:false
     },
-    // resetLink:{
-    //     type:String,
-    //     default:null
-    // },
+ 
     lastLogin:{
         type:Date,
         default:Date.now()

@@ -22,6 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.9",
     "mongoose-permissions": "^1.0.0",
+    "multer": "^1.4.4",
     "nodemailer": "^6.7.3",
     "nodemailer-sendgrid": "^1.0.3",
     "redis": "^4.0.6"

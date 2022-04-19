@@ -1,4 +1,3 @@
-const { emailConfirmation, emailData } = require("../Helpers/email")
 const nodemailer = require('nodemailer');
 const nodemailerSendgrid = require('nodemailer-sendgrid');
 

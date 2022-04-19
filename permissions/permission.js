@@ -32,7 +32,7 @@ const permChecker = async (perm = "",req,res,next) =>{
 const setPost = async (req,res,next)=>{
     try{
         const{id:postId} = req.params;
-        const post = await Post.findOne({_id:postId}).populate('postedBy');
+        const post = await Post.findOne({_id:postId});
         if(!post){
             res.status(500).json({success:false,msg:"Error: post not found!!! "}) 
         }
