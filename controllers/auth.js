@@ -6,6 +6,7 @@ const { addRoleToUser } = require("../Helpers/roles");
 const { setKeyRedis, getKeyRedis } = require("../Helpers/redis");
 const { emailConfirmation, emailData } = require("../Helpers/email");
 const {sendNewEmail} = require("../Jobs/queues")
+const{BadRequest} = require("../errors/ApiError");
 
 
 
@@ -14,14 +15,17 @@ const register = async (req, res) => {
         const { email, plainPassword, firstName, lastName, middlename, username, mobile, confirmPassword } = req.body;
         existingEmail = await User.findOne({ email });
         if (existingEmail) {
-            return res.status(500).json("User already have an account with this email");
+            throw new BadRequest("User already have an account with this email")
+            // return res.status(500).json("User already have an account with this email");
         }
         existingUsername = await User.findOne({ username });
         if (existingUsername) {
-            return res.status(500).json("Username is already taken");
+            throw new BadRequest("Username is already taken")
+            // return res.status(500).json("Username is already taken");
         }
         if (plainPassword !== confirmPassword) {
-            return res.status(500).json("password doe not match");
+            throw new BadRequest("password doe not match")
+            // return res.status(500).json("password doe not match");
         }
         const password = await bcrypt.hash(plainPassword, 10);
         const emailToken = crypto.randomBytes(64).toString('hex');
@@ -32,10 +36,12 @@ const register = async (req, res) => {
 
         const role = await addRoleToUser("User", user);
         if (!role){
-            return res.status(500).json({ success: false, msg: "Error assigning role to user" });
+            throw new BadRequest("Error assigning role to user" )
+            // return res.status(500).json({ success: false, msg: "Error assigning role to user" });
         } 
         if (!user){
-            return res.status(500).json({ success: false, msg: "Error user not created" });
+            throw new BadRequest("Error user not created")
+            // return res.status(500).json({ success: false, msg: "Error user not created" });
         }
         // email token key-value  key = email-token value = email
         await setKeyRedis(`email-${emailToken}`, email, 172800);

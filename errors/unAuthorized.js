@@ -1,4 +1,4 @@
-const {customApiError} = require('./customError')
+const customApiError = require('./customError')
 const {StatusCodes} = require("http-status-codes")
 class UnAuthorizedError extends customApiError{
     constructor(message,statusCode){
@@ -7,4 +7,4 @@ class UnAuthorizedError extends customApiError{
     }
 }
 
-export default UnAuthorizedError;
+module.exports = UnAuthorizedError;

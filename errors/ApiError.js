@@ -5,5 +5,4 @@ const UnAuthorizedError = require("./unAuthorized")
 const customApiError = require("./customError");
 
 
-
-module.exports = {BadRequest,NotFound,UnAuthenticatedError,UnAuthorizedError,customApiError}
+// module.exports = {BadRequest,NotFound,UnAuthenticatedError,UnAuthorizedError,customApiError}
