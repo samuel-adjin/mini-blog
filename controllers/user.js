@@ -204,11 +204,12 @@ const uploadProfilePic = async (req,res)=>{
 
 const deleteProfilePic = async (req,res)=>{
     try{
-        const user = await User.findOneAndDelete({_id:req.user._id});
+        const user = await User.findOne({_id:req.user._id});
         if(!user){
             res.status(500).json({success:false,msg:'Ooops... user not found!!! Profile pic not removed'});   
         }
         deleteFile(user.profilePic)
+        user.profilePic = null;
         res.status(200).json({success:"true", msg:"Profile pic removed successfully"});
     }catch(error){
         console.log(error);
